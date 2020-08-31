@@ -34,11 +34,14 @@ app = Flask(__name__)
 def welcome():
     """List all available api routes."""
     return (
+        
         f"Available Routes :<br/>"
         f"<a href='/api/v1.0/precipitation'>precipitation</a><br/>"
         f"<a href='/api/v1.0/stations'>stations</a><br/>"
         f"<a href='/api/v1.0/tobs'>tobs</a><br/>"
-        f"<a href='/api/v1.0/start'>start</a><br/>"
+        f"<a href='/api/v1.0/start_date/2016-08-23'>start_date/2016-08-23</a><br/>"
+        f"<a href='/api/v1.0/start_and_end_date/2016-08-23/2016-08-25'>start_and_end_date/2016-08-23/2016-08-25</a><br/>"
+    
     )
 
 
@@ -100,7 +103,36 @@ def tobs():
 
     return jsonify(tobs)  
 
+@app.route("/api/v1.0/start_date/<start>")
+def start_date(start):
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+ 
+    # When given the start only, calculate TMIN, TAVG, and TMAX for all dates greater than and equal to the start date.     
+    results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.date >= start).all()
 
+    session.close()
+   
+    # Convert list of tuples into normal list
+    all_results = list(np.ravel(results))
+
+    return jsonify(all_results)      
+
+@app.route("/api/v1.0/start_and_end_date/<start>/<end>")
+def start_and_end_date(start,end):
+    # Create our session (link) from Python to the DB
+    session = Session(engine)
+ 
+    # When given the start and the end date, calculate the TMIN, TAVG, and TMAX for dates between the start and end date inclusive.     
+    results = session.query(func.min(Measurement.tobs), func.avg(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.date >= start)\
+        .filter(Measurement.date <= end).all()
+
+    session.close()
+   
+    # Convert list of tuples into normal list
+    all_results = list(np.ravel(results))
+
+    return jsonify(all_results)      
 
 
 
