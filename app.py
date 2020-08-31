@@ -40,7 +40,7 @@ def welcome():
         f"<a href='/api/v1.0/stations'>stations</a><br/>"
         f"<a href='/api/v1.0/tobs'>tobs</a><br/>"
         f"<a href='/api/v1.0/start_date/2016-08-23'>start_date/2016-08-23</a><br/>"
-        f"<a href='/api/v1.0/start_and_end_date/2016-08-23/2016-08-25'>start_and_end_date/2016-08-23/2016-08-25</a><br/>"
+        f"<a href='/api/v1.0/start_and_end_date/2016-08-23/2016-08-31'>start_and_end_date/2016-08-23/2016-08-31</a><br/>"
     
     )
 
@@ -83,8 +83,7 @@ def stations():
 
     return jsonify(all_stations)  
 
-
-  
+    # Query the dates and temperature observations of the most active station for the last year of data.  
 @app.route("/api/v1.0/tobs")
 def tobs():
     # Create our session (link) from Python to the DB
